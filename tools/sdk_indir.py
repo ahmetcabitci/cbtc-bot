@@ -1,4 +1,4 @@
-"""BearWare'ın uygun TeamTalk SDK paketinden botun iki SDK dosyasını kur.
+"""Ubuntu 24'te elle yerleştirilen SDK'yı doğrula; Ubuntu 26'da indir.
 
 Kullanım: python3 tools/sdk_indir.py [--force] [--archive-url RESMI_BEARWARE_ADRESI]
 """
@@ -121,7 +121,9 @@ def verify_sdk(folder):
     if not wrapper.is_file() or not library.is_file():
         raise SDKError("TeamTalk5.py veya libTeamTalk5.so bulunamadı.")
     ast.parse(wrapper.read_text(encoding="utf-8"))
-    if library.read_bytes()[:4] != b"\x7fELF":
+    with library.open("rb") as file:
+        header = file.read(20)
+    if header[:4] != b"\x7fELF" or int.from_bytes(header[18:20], "little") != 62:
         raise SDKError("libTeamTalk5.so geçerli bir Linux kütüphanesi değil.")
     env = os.environ.copy()
     env["LD_LIBRARY_PATH"] = str(folder) + os.pathsep + env.get("LD_LIBRARY_PATH", "")
@@ -134,15 +136,23 @@ def verify_sdk(folder):
     return result.stdout.strip()
 
 
-def install(archive_url, force=False):
-    if SDK_DIR.exists() and not force:
-        try:
-            version = verify_sdk(SDK_DIR)
-            print(f"SDK zaten hazır ({version}). Yeniden kurmak için --force kullanın.")
-            return
-        except (SDKError, OSError, SyntaxError):
-            pass
+def promote_sdk(staged):
+    backup = PROJECT_DIR / "sdk.onceki"
+    if backup.exists():
+        raise SDKError("sdk.onceki yedeği zaten var; önce bu klasörü inceleyin.")
+    if SDK_DIR.exists():
+        SDK_DIR.rename(backup)
+    try:
+        staged.rename(SDK_DIR)
+    except OSError:
+        if backup.exists():
+            backup.rename(SDK_DIR)
+        raise
+    if backup.exists():
+        print("Önceki SDK sdk.onceki klasöründe saklandı.")
 
+
+def install(archive_url):
     extractor = shutil.which("7z") or shutil.which("7zz")
     if not extractor:
         raise SDKError("7z bulunamadı. Ubuntu'da önce 'sudo apt install p7zip-full' çalıştırın.")
@@ -172,20 +182,8 @@ def install(archive_url, force=False):
         shutil.copy2(library, staged / "libTeamTalk5.so")
         version = verify_sdk(staged)
 
-        backup = PROJECT_DIR / "sdk.onceki"
-        if backup.exists():
-            raise SDKError("sdk.onceki yedeği zaten var; önce bu klasörü inceleyin.")
-        if SDK_DIR.exists():
-            SDK_DIR.rename(backup)
-        try:
-            staged.rename(SDK_DIR)
-        except OSError:
-            if backup.exists():
-                backup.rename(SDK_DIR)
-            raise
+        promote_sdk(staged)
         print(f"TeamTalk SDK kuruldu ({version}).")
-        if backup.exists():
-            print("Önceki SDK sdk.onceki klasöründe saklandı.")
 
 
 def main():
@@ -201,6 +199,13 @@ def main():
                 return 0
             except (SDKError, OSError, SyntaxError):
                 pass
+        if major == "24" and not args.archive_url:
+            if not SDK_DIR.exists():
+                raise SDKError("Ubuntu 24 SDK dosyalarını önce /opt/cbtc-bot/sdk klasörüne yerleştirin. Paket için geliştiriciyle iletişime geçin.")
+            print(f"Ubuntu 24 SDK doğrulandı ({verify_sdk(SDK_DIR)}).")
+            return 0
+        if major != "26" and not args.archive_url:
+            raise SDKError(f"Ubuntu {major} için otomatik SDK kurulumu henüz desteklenmiyor.")
         if args.archive_url:
             url = official_archive_url(args.archive_url)
             if f"_ubuntu{major}_" not in url:
@@ -210,7 +215,7 @@ def main():
             with urlopen(request, timeout=20) as response:
                 html = response.read(2 * 1024 * 1024).decode("utf-8", errors="replace")
             url = select_archive(html, major)
-        install(url, force=args.force)
+        install(url)
         return 0
     except (SDKError, OSError, SyntaxError, subprocess.TimeoutExpired) as exc:
         print(f"SDK kurulamadı: {exc}", file=sys.stderr)

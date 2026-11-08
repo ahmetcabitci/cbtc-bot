@@ -1,19 +1,26 @@
 CBTC BOT: SIFIRDAN KURULUM KILAVUZU
-Ubuntu 24.04 x86_64
+Ubuntu 24.04 ve 26.04 x86_64
 
 Botu geliştiren ve bu kılavuzu hazırlayan: Ahmet Çabıtçı
 Öneri ve görüşler: cabitciahmet@gmail.com
 Telegram grubu: https://t.me/cabitcibot
 Umarım bu bottan memnun kalırsınız.
 
-Bu kılavuz, yeni bir Ubuntu 24.04 sunucuya ilk kez kurulum içindir. Her
-komutu tek tek yazıp Enter tuşuna basın. Bir komut bitmeden sonrakine
-geçmeyin. sudo parola isterse Ubuntu kullanıcı parolanızı yazın. Parola
-yazılırken ekranda karakter görünmemesi normaldir.
+Bu kılavuz, yeni Ubuntu 24.04 veya 26.04 x86_64 sunucuya ilk kez kurulum
+içindir. Komutları PuTTY terminalinde sırayla çalıştırın. Bir komut bitmeden
+sonrakine geçmeyin. sudo parola isterse Ubuntu kullanıcı parolanızı yazın;
+parola ekranda görünmez.
+
+Kurulumda gerekenler: sudo yetkisi, internet bağlantısı, TeamTalk sunucu
+adresi ve bot hesabı, Python 3, curl, unzip, Node.js 24, npm, FFmpeg, 7-Zip.
+Komutlar bu programları aşağıdaki adımlarda kurar. Ubuntu 24 için ayrıca
+TeamTalk SDK gerekir. Bu SDK GitHub paketine dahil değildir. İstemek için
+cabitciahmet@gmail.com adresine yazın veya https://t.me/cabitcibot
+grubundan iletişime geçin. Ubuntu 26 SDK'sı kurulum aracıyla BearWare'dan
+indirilir. Ubuntu 26 kurulumu henüz gerçek sunucuda doğrulanmadı.
 
 GitHub deposu: https://github.com/ahmetcabitci/cbtc-bot
-Depo oluşturulmuş olsa da dosyalar GitHub'a gönderilmeden git clone komutu
-çalışmaz.
+Depodaki dosyaları indirmek için 6. adımdaki curl komutunu kullanın.
 
 1. SUNUCUYA BAĞLANIN VE UBUNTU SÜRÜMÜNE BAKIN
 
@@ -21,14 +28,25 @@ SSH ile yeni sunucuya bağlanın. Terminalde yazın:
 
 cat /etc/os-release
 
-Bu komut işletim sistemi bilgilerini gösterir. VERSION_ID 24.04 olmalıdır.
+Bu komut işletim sistemi bilgilerini gösterir. VERSION_ID 24.04 veya 26.04 olmalıdır.
 
 uname -m
 
 Bu komut işlemci mimarisini gösterir. x86_64 yazmalıdır. Bu kılavuz başka
 Ubuntu sürümlerinde henüz doğrulanmadı.
 
-2. KURULUM İÇİN UBUNTU KULLANICISI AÇIN
+2. SUNUCUYU GÜNCELLEYİN
+
+sudo apt update
+
+Bu komut Ubuntu paket listesini yeniler.
+
+sudo apt upgrade -y
+
+Bu komut kurulu paketlerin güncellemelerini yükler. Çekirdek güncellendiyse
+sunucuyu bakım zamanında yeniden başlatmanız gerekebilir.
+
+3. KURULUM İÇİN UBUNTU KULLANICISI AÇIN
 
 Zaten sudo kullanabilen ayrı hesabınız varsa bu adımı geçin. Yalnızca root
 hesabıyla bağlandıysanız aşağıdaki üç komutu çalıştırın:
@@ -46,11 +64,7 @@ su - cbtc
 
 Bu komut cbtc oturumuna geçer. Sonraki adımları bu oturumda yapın.
 
-3. PYTHON'U KURUN
-
-sudo apt update
-
-Bu komut Ubuntu paket listesini yeniler; henüz bir program kurmaz.
+4. PYTHON'U KURUN
 
 sudo apt install -y python3 python3-venv python3-pip
 
@@ -61,12 +75,12 @@ python3 --version
 
 Bu komut Python'un kurulduğunu doğrular ve sürümünü gösterir.
 
-4. DİĞER YARDIMCI PROGRAMLARI KURUN
+5. DİĞER YARDIMCI PROGRAMLARI KURUN
 
-sudo apt install -y git nodejs npm ffmpeg 7zip nano
+sudo apt install -y curl unzip nodejs npm ffmpeg 7zip nano
 
-git GitHub'dan dosya indirir. nodejs ve npm YouTube araması içindir.
-ffmpeg sesi işler. 7zip SDK arşivini açar. nano dosya düzenler.
+curl GitHub'dan ZIP indirir, unzip bu ZIP'i açar. nodejs ve npm YouTube
+araması içindir. ffmpeg sesi işler. 7zip SDK arşivini açar. nano dosya düzenler.
 
 sudo npm install -g n
 
@@ -85,20 +99,30 @@ node --version
 
 Bu komut Node sürümünü gösterir. Çıktı v24 ile başlamalıdır.
 
-5. BOTU GITHUB'DAN İNDİRİN
+6. BOTU GITHUB'DAN İNDİRİN
 
-sudo mkdir -p /opt/cbtc-bot
+cd ~
 
-Bu komut botun kalıcı klasörünü oluşturur.
+Bu komut sizi kendi kullanıcı klasörünüze götürür. İndirme burada yapılır.
 
-sudo chown "$USER":"$USER" /opt/cbtc-bot
+curl -fL https://github.com/ahmetcabitci/cbtc-bot/archive/refs/heads/main.zip -o cbtc-bot.zip
 
-Bu komut klasörü kurulum yapan Ubuntu kullanıcısına verir.
+Bu komut botun GitHub'daki main dalını ZIP olarak cbtc-bot.zip adıyla indirir.
+Bağlantı: https://github.com/ahmetcabitci/cbtc-bot/archive/refs/heads/main.zip
 
-git clone https://github.com/ahmetcabitci/cbtc-bot.git /opt/cbtc-bot
+unzip cbtc-bot.zip
 
-Bu komut GitHub deposunu /opt/cbtc-bot içine indirir. Depo dosyaları
-GitHub'a yüklendikten sonra çalışır.
+Bu komut ZIP'i açar ve bulunduğunuz yerde cbtc-bot-main klasörünü oluşturur.
+
+sudo mv cbtc-bot-main /opt/cbtc-bot
+
+Bu komut bot klasörünü kalıcı konumu olan /opt/cbtc-bot yoluna taşır.
+Bu konumda önceden cbtc-bot klasörü varsa mv komutunu tekrar çalıştırmayın;
+önce mevcut kurulumu kontrol edin.
+
+sudo chown -R "$USER":"$USER" /opt/cbtc-bot
+
+Bu komut dosyaları kurulum yapan Ubuntu kullanıcısına verir.
 
 cd /opt/cbtc-bot
 
@@ -109,7 +133,7 @@ ls
 Bu komut klasörleri gösterir. bot, tools, youtube, systemd ve
 requirements.txt dosyalarını görmelisiniz.
 
-6. PYTHON GEREKSİNİMLERİNİ KURUN
+7. PYTHON GEREKSİNİMLERİNİ KURUN
 
 cat requirements.txt
 
@@ -125,7 +149,7 @@ Bu komut bot klasöründe ayrı Python ortamı oluşturur.
 Bu komut requirements.txt dosyasındaki gereksinimleri bu ortama kurar.
 Kurulumun hatasız bitmesini bekleyin.
 
-7. YOUTUBE ARAMA BİLEŞENİNİ KURUN
+8. YOUTUBE ARAMA BİLEŞENİNİ KURUN
 
 npm ci --prefix youtube --omit=dev
 
@@ -136,7 +160,33 @@ Bot çalışırken yt-dlp'nin yeni kararlı sürümünü GitHub'da arka planda
 kontrol eder. Bulursa indirir, doğrular ve günceller. Kullanıcıya özel
 mesaj göndermez. Sunucunun GitHub'a erişmesi gerekir.
 
-8. TEAMTALK SDK'YI İNDİRİN VEYA YERLEŞTİRİN
+9. TEAMTALK SDK'YI KURUN
+
+Ubuntu 26 kullanıyorsanız doğrudan aşağıdaki cd ve python3 komutlarını
+çalıştırın. Araç BearWare'dan Ubuntu 26 SDK paketini indirip /opt/cbtc-bot/sdk
+klasörüne kurar ve doğrular.
+
+Ubuntu 24 kullanıyorsanız önce geliştiriciden Ubuntu 24 SDK ZIP dosyasını
+isteyin. Bu dosya GitHub deposunda bulunmaz. Bilgisayarınızdan FTP/SFTP ile
+ZIP dosyasını sunucuda /home/cbtc dizinine gönderin. Kurulumu başka Ubuntu
+kullanıcısıyla yapıyorsanız /home/cbtc yerine kendi ev dizininizi kullanın.
+PuTTY terminalinde, Ubuntu 24 için şu komutları sırayla çalıştırın:
+
+mkdir -p /opt/cbtc-bot/sdk
+
+Bu komut SDK dosyalarının kullanılacağı klasörü oluşturur.
+
+7z x ~/cbtc-bot-sdk-ubuntu24.zip -o/opt/cbtc-bot/sdk
+
+Bu komut ZIP içindeki TeamTalk5.py ve libTeamTalk5.so dosyalarını doğrudan
+/opt/cbtc-bot/sdk klasörüne açar. ZIP dosya adınız farklıysa komuttaki adı
+değiştirin. 7z dosyaları açamazsa FTP/SFTP ile iki dosyayı doğrudan aynı
+klasöre gönderin.
+
+ls /opt/cbtc-bot/sdk
+
+Bu komut iki dosyanın doğru yerde olduğunu gösterir. Ubuntu 24 kullanıcıları
+bundan sonra aşağıdaki ortak doğrulama adımına geçer.
 
 cd /opt/cbtc-bot/tools
 
@@ -144,28 +194,16 @@ Bu komut SDK indiricisinin bulunduğu tools klasörüne girer.
 
 python3 sdk_indir.py
 
-Bu komut BearWare'ın resmi sayfasında Ubuntu sürümüne uygun TeamTalk SDK
-paketini arar, indirir, sdk klasörüne kurar ve çalışmasını doğrular.
-
-BearWare sayfasında Ubuntu 24 paketi bulunmazsa hata alırsınız. Bu durumda
-mevcut Ubuntu 24 üzerinde çalışan botun sdk klasöründeki TeamTalk5.py ve
-libTeamTalk5.so dosyalarını FTP ile yeni sunucuya taşıyın. Önce yeni
-sunucuda şu klasörü oluşturun:
-
-mkdir -p /opt/cbtc-bot/sdk
-
-Bu komut SDK dosyalarının konacağı klasörü oluşturur. FTP ile iki dosyayı
-/opt/cbtc-bot/sdk içine gönderin. Aktarım bittikten sonra yeniden yazın:
-
-python3 sdk_indir.py
-
-Bu komut dosyaların çalıştığını doğrular. "SDK zaten hazır" görmelisiniz.
+Bu komut Ubuntu 24'te yerleştirdiğiniz iki SDK dosyasını doğrular; Ubuntu
+26'da resmî SDK'yı indirip kurar ve doğrular. Ubuntu 24'te "SDK zaten hazır",
+Ubuntu 26'da "TeamTalk SDK kuruldu" yazmalıdır. Hata çıkarsa sonraki adıma
+geçmeyin.
 
 cd /opt/cbtc-bot
 
 Bu komut yeniden botun ana klasörüne döner.
 
-9. BOT AYARLARINI DOLDURUN
+10. BOT AYARLARINI DOLDURUN
 
 cp config_default.json config.json
 
@@ -185,7 +223,7 @@ python3 -c 'import json; json.load(open("config.json", encoding="utf-8")); print
 Bu komut JSON biçimini kontrol eder. Parolayı ekrana yazdırmaz. Hata
 çıkarsa nano ile tırnakları ve virgülleri düzeltin.
 
-10. BOTU ÖNCE ELLE DENEYİN
+11. BOTU ÖNCE ELLE DENEYİN
 
 LD_LIBRARY_PATH=/opt/cbtc-bot/sdk python3 bot/teamtalk.py
 
@@ -194,7 +232,7 @@ Bu komut botu terminalde başlatır. LD_LIBRARY_PATH TeamTalk SDK yoludur.
 Botu TeamTalk kanal listesinde de görün. Denemeden sonra Ctrl+C ile
 durdurun. Hata varsa servis adımına geçmeden ayarları veya SDK'yı düzeltin.
 
-11. ARKA PLAN SERVİSİ İÇİN HESAP AÇIN
+12. ARKA PLAN SERVİSİ İÇİN HESAP AÇIN
 
 sudo useradd --system --home-dir /opt/cbtc-bot --shell /usr/sbin/nologin cbtc-bot
 
@@ -210,7 +248,7 @@ sudo chmod 600 /opt/cbtc-bot/config.json
 
 Bu komut TeamTalk parolası içeren dosyayı yalnızca sahibine açar.
 
-12. SERVİS DOSYASINI KOPYALAYIN
+13. SERVİS DOSYASINI KOPYALAYIN
 
 cat /opt/cbtc-bot/systemd/cbtc-bot.service
 
@@ -234,7 +272,7 @@ sudo systemctl daemon-reload
 
 Bu komut systemd'nin yeni servis dosyasını okumasını sağlar.
 
-13. SERVİSİ AÇIN VE KONTROL EDİN
+14. SERVİSİ AÇIN VE KONTROL EDİN
 
 sudo systemctl enable cbtc-bot
 
@@ -252,7 +290,7 @@ journalctl -u cbtc-bot -n 40 --no-pager
 
 Bu komut botun son 40 günlük satırını gösterir. Hata varsa burada arayın.
 
-14. GÜNLÜK YÖNETİM KOMUTLARI
+15. GÜNLÜK YÖNETİM KOMUTLARI
 
 sudo systemctl stop cbtc-bot
 Botu durdurur.
@@ -272,5 +310,6 @@ Botun son 100 günlük satırını gösterir.
 SON NOT
 
 Bu kurulum PulseAudio veya libmpv kullanmaz. config.json, SDK dosyaları,
-Python ortamı ve node_modules GitHub deposuna konmaz. Ubuntu 22 desteği
+Python ortamı ve node_modules GitHub deposuna konmaz. Ubuntu 24 SDK
+GitHub'dan inmez; ayrı ZIP olarak geliştiriciden alınır. Ubuntu 22 desteği
 uygun SDK ve bağımlılıklar doğrulanınca ayrıca hazırlanacaktır.
