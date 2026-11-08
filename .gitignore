@@ -1,0 +1,11 @@
+config.json
+.venv-youtube/
+sdk/
+sdk.onceki/
+youtube/node_modules/
+youtube/yt-dlp
+youtube/.yt-dlp-*
+__pycache__/
+*.py[cod]
+.npm-cache/
+*.log

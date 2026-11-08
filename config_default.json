@@ -1,0 +1,18 @@
+{
+  "teamtalk": {
+    "host": "localhost",
+    "tcp_port": 10333,
+    "udp_port": 10333,
+    "encrypted": false,
+    "nickname": "CBTC Bot",
+    "username": "",
+    "password": "",
+    "channel_name": "/",
+    "channel_password": "",
+    "status_message": "CBTC Bot hazır | Şarkı istemek için: o sanatçı şarkı"
+  },
+  "audio": {
+    "volume": 15,
+    "max_volume": 100
+  }
+}

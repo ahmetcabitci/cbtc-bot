@@ -1,0 +1,276 @@
+CBTC BOT: SIFIRDAN KURULUM KILAVUZU
+Ubuntu 24.04 x86_64
+
+Botu geliştiren ve bu kılavuzu hazırlayan: Ahmet Çabıtçı
+Öneri ve görüşler: cabitciahmet@gmail.com
+Telegram grubu: https://t.me/cabitcibot
+Umarım bu bottan memnun kalırsınız.
+
+Bu kılavuz, yeni bir Ubuntu 24.04 sunucuya ilk kez kurulum içindir. Her
+komutu tek tek yazıp Enter tuşuna basın. Bir komut bitmeden sonrakine
+geçmeyin. sudo parola isterse Ubuntu kullanıcı parolanızı yazın. Parola
+yazılırken ekranda karakter görünmemesi normaldir.
+
+GitHub deposu: https://github.com/ahmetcabitci/cbtc-bot
+Depo oluşturulmuş olsa da dosyalar GitHub'a gönderilmeden git clone komutu
+çalışmaz.
+
+1. SUNUCUYA BAĞLANIN VE UBUNTU SÜRÜMÜNE BAKIN
+
+SSH ile yeni sunucuya bağlanın. Terminalde yazın:
+
+cat /etc/os-release
+
+Bu komut işletim sistemi bilgilerini gösterir. VERSION_ID 24.04 olmalıdır.
+
+uname -m
+
+Bu komut işlemci mimarisini gösterir. x86_64 yazmalıdır. Bu kılavuz başka
+Ubuntu sürümlerinde henüz doğrulanmadı.
+
+2. KURULUM İÇİN UBUNTU KULLANICISI AÇIN
+
+Zaten sudo kullanabilen ayrı hesabınız varsa bu adımı geçin. Yalnızca root
+hesabıyla bağlandıysanız aşağıdaki üç komutu çalıştırın:
+
+adduser cbtc
+
+Bu komut cbtc adlı kullanıcıyı açar. İki kez parola girin. Ad, telefon
+gibi diğer soruları boş bırakmak için Enter tuşuna basın.
+
+usermod -aG sudo cbtc
+
+Bu komut cbtc kullanıcısının kurulumda sudo çalıştırabilmesini sağlar.
+
+su - cbtc
+
+Bu komut cbtc oturumuna geçer. Sonraki adımları bu oturumda yapın.
+
+3. PYTHON'U KURUN
+
+sudo apt update
+
+Bu komut Ubuntu paket listesini yeniler; henüz bir program kurmaz.
+
+sudo apt install -y python3 python3-venv python3-pip
+
+Bu komut Python'u, ayrı Python ortamı oluşturma desteğini ve pip paket
+yöneticisini kurar. -y kurulum sorusuna evet yanıtı verir.
+
+python3 --version
+
+Bu komut Python'un kurulduğunu doğrular ve sürümünü gösterir.
+
+4. DİĞER YARDIMCI PROGRAMLARI KURUN
+
+sudo apt install -y git nodejs npm ffmpeg 7zip nano
+
+git GitHub'dan dosya indirir. nodejs ve npm YouTube araması içindir.
+ffmpeg sesi işler. 7zip SDK arşivini açar. nano dosya düzenler.
+
+sudo npm install -g n
+
+Bu komut Node.js sürüm yöneticisi n programını kurar.
+
+sudo n 24
+
+Bu komut Node.js 24'ü kurar. Ubuntu 24'ün Node 18 paketi güncel yt-dlp
+için eski kalır.
+
+hash -r
+
+Bu komut terminalin eski node yolunu hatırlamasını temizler.
+
+node --version
+
+Bu komut Node sürümünü gösterir. Çıktı v24 ile başlamalıdır.
+
+5. BOTU GITHUB'DAN İNDİRİN
+
+sudo mkdir -p /opt/cbtc-bot
+
+Bu komut botun kalıcı klasörünü oluşturur.
+
+sudo chown "$USER":"$USER" /opt/cbtc-bot
+
+Bu komut klasörü kurulum yapan Ubuntu kullanıcısına verir.
+
+git clone https://github.com/ahmetcabitci/cbtc-bot.git /opt/cbtc-bot
+
+Bu komut GitHub deposunu /opt/cbtc-bot içine indirir. Depo dosyaları
+GitHub'a yüklendikten sonra çalışır.
+
+cd /opt/cbtc-bot
+
+Bu komut botun ana klasörüne girer. Sonraki yollar buraya göredir.
+
+ls
+
+Bu komut klasörleri gösterir. bot, tools, youtube, systemd ve
+requirements.txt dosyalarını görmelisiniz.
+
+6. PYTHON GEREKSİNİMLERİNİ KURUN
+
+cat requirements.txt
+
+Bu komut dosyanın içeriğini gösterir. İçinde yt-dlp[default] yazmalıdır.
+yt-dlp YouTube sesini alır; default bölümü JavaScript çözümleyicisini kurar.
+
+python3 -m venv .venv-youtube
+
+Bu komut bot klasöründe ayrı Python ortamı oluşturur.
+
+.venv-youtube/bin/python -m pip install -r requirements.txt
+
+Bu komut requirements.txt dosyasındaki gereksinimleri bu ortama kurar.
+Kurulumun hatasız bitmesini bekleyin.
+
+7. YOUTUBE ARAMA BİLEŞENİNİ KURUN
+
+npm ci --prefix youtube --omit=dev
+
+Bu komut youtube/package-lock.json dosyasında belirtilen youtubei.js
+paketini kurar. Kurulan dosyalar youtube/node_modules içine yerleşir.
+
+Bot çalışırken yt-dlp'nin yeni kararlı sürümünü GitHub'da arka planda
+kontrol eder. Bulursa indirir, doğrular ve günceller. Kullanıcıya özel
+mesaj göndermez. Sunucunun GitHub'a erişmesi gerekir.
+
+8. TEAMTALK SDK'YI İNDİRİN VEYA YERLEŞTİRİN
+
+cd /opt/cbtc-bot/tools
+
+Bu komut SDK indiricisinin bulunduğu tools klasörüne girer.
+
+python3 sdk_indir.py
+
+Bu komut BearWare'ın resmi sayfasında Ubuntu sürümüne uygun TeamTalk SDK
+paketini arar, indirir, sdk klasörüne kurar ve çalışmasını doğrular.
+
+BearWare sayfasında Ubuntu 24 paketi bulunmazsa hata alırsınız. Bu durumda
+mevcut Ubuntu 24 üzerinde çalışan botun sdk klasöründeki TeamTalk5.py ve
+libTeamTalk5.so dosyalarını FTP ile yeni sunucuya taşıyın. Önce yeni
+sunucuda şu klasörü oluşturun:
+
+mkdir -p /opt/cbtc-bot/sdk
+
+Bu komut SDK dosyalarının konacağı klasörü oluşturur. FTP ile iki dosyayı
+/opt/cbtc-bot/sdk içine gönderin. Aktarım bittikten sonra yeniden yazın:
+
+python3 sdk_indir.py
+
+Bu komut dosyaların çalıştığını doğrular. "SDK zaten hazır" görmelisiniz.
+
+cd /opt/cbtc-bot
+
+Bu komut yeniden botun ana klasörüne döner.
+
+9. BOT AYARLARINI DOLDURUN
+
+cp config_default.json config.json
+
+Bu komut örnek ayar dosyasından botun okuyacağı config.json dosyasını
+oluşturur. Örnek dosyada gerçek hesap parolası yoktur.
+
+nano config.json
+
+Bu komut ayarları açar. teamtalk bölümündeki host, tcp_port, udp_port,
+username ve password değerlerini kendi sunucunuza göre girin. Bot kanal
+kimliği 1 olan kanala katılır. Kanal şifreliyse channel_password girin.
+nickname başlangıç bot adıdır. status_message boşta görünen yazıdır.
+Kaydetmek için Ctrl+O, Enter; çıkmak için Ctrl+X kullanın.
+
+python3 -c 'import json; json.load(open("config.json", encoding="utf-8")); print("JSON geçerli")'
+
+Bu komut JSON biçimini kontrol eder. Parolayı ekrana yazdırmaz. Hata
+çıkarsa nano ile tırnakları ve virgülleri düzeltin.
+
+10. BOTU ÖNCE ELLE DENEYİN
+
+LD_LIBRARY_PATH=/opt/cbtc-bot/sdk python3 bot/teamtalk.py
+
+Bu komut botu terminalde başlatır. LD_LIBRARY_PATH TeamTalk SDK yoludur.
+"Sunucuya bağlanıldı" ve "Bot kanala katıldı" mesajlarını bekleyin.
+Botu TeamTalk kanal listesinde de görün. Denemeden sonra Ctrl+C ile
+durdurun. Hata varsa servis adımına geçmeden ayarları veya SDK'yı düzeltin.
+
+11. ARKA PLAN SERVİSİ İÇİN HESAP AÇIN
+
+sudo useradd --system --home-dir /opt/cbtc-bot --shell /usr/sbin/nologin cbtc-bot
+
+Bu komut botun çalışacağı cbtc-bot hesabını açar. Bu hesap SSH oturumu
+için değildir; kurulum yapan cbtc hesabından farklıdır.
+
+sudo chown -R cbtc-bot:cbtc-bot /opt/cbtc-bot
+
+Bu komut bot dosyalarını servis hesabına verir. Ayar kaydı ve yt-dlp
+güncellemesi için yazma izni gerekir.
+
+sudo chmod 600 /opt/cbtc-bot/config.json
+
+Bu komut TeamTalk parolası içeren dosyayı yalnızca sahibine açar.
+
+12. SERVİS DOSYASINI KOPYALAYIN
+
+cat /opt/cbtc-bot/systemd/cbtc-bot.service
+
+Bu komut hazır servis dosyasını gösterir. User çalışacak hesabı,
+WorkingDirectory bot klasörünü, LD_LIBRARY_PATH SDK yolunu, ExecStart
+başlatma komutunu gösterir. Restart=always bot beklenmedik şekilde
+kapanırsa yeniden başlatır.
+
+nano /opt/cbtc-bot/systemd/cbtc-bot.service
+
+Bu komut servis dosyasını elle değiştirmek isteyenler içindir. /opt/cbtc-bot
+yolunu kullandıysanız değişiklik yapmadan Ctrl+X ile çıkabilirsiniz.
+Farklı yol kullandıysanız WorkingDirectory, LD_LIBRARY_PATH ve ExecStart
+satırlarını o yola göre düzeltin.
+
+sudo cp /opt/cbtc-bot/systemd/cbtc-bot.service /etc/systemd/system/cbtc-bot.service
+
+Bu komut servis dosyasını Ubuntu'nun systemd klasörüne kopyalar.
+
+sudo systemctl daemon-reload
+
+Bu komut systemd'nin yeni servis dosyasını okumasını sağlar.
+
+13. SERVİSİ AÇIN VE KONTROL EDİN
+
+sudo systemctl enable cbtc-bot
+
+Bu komut botu sunucu yeniden açıldığında otomatik başlatılacak şekilde ayarlar.
+
+sudo systemctl start cbtc-bot
+
+Bu komut botu şimdi başlatır. SSH terminalini kapatsanız da bot çalışır.
+
+systemctl status cbtc-bot --no-pager
+
+Bu komut durumunu gösterir. active (running) görmelisiniz.
+
+journalctl -u cbtc-bot -n 40 --no-pager
+
+Bu komut botun son 40 günlük satırını gösterir. Hata varsa burada arayın.
+
+14. GÜNLÜK YÖNETİM KOMUTLARI
+
+sudo systemctl stop cbtc-bot
+Botu durdurur.
+
+sudo systemctl start cbtc-bot
+Botu başlatır.
+
+sudo systemctl restart cbtc-bot
+Botu yeniden başlatır. Kod güncellemesinden sonra kullanın.
+
+systemctl status cbtc-bot --no-pager
+Botun çalışıp çalışmadığını gösterir.
+
+journalctl -u cbtc-bot -n 100 --no-pager
+Botun son 100 günlük satırını gösterir.
+
+SON NOT
+
+Bu kurulum PulseAudio veya libmpv kullanmaz. config.json, SDK dosyaları,
+Python ortamı ve node_modules GitHub deposuna konmaz. Ubuntu 22 desteği
+uygun SDK ve bağımlılıklar doğrulanınca ayrıca hazırlanacaktır.

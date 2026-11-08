@@ -1,0 +1,20 @@
+[Unit]
+Description=CBTC Bot TeamTalk music bot
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=cbtc-bot
+Group=cbtc-bot
+WorkingDirectory=/opt/cbtc-bot
+Environment=PYTHONUNBUFFERED=1
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+Environment=LD_LIBRARY_PATH=/opt/cbtc-bot/sdk
+ExecStart=/usr/bin/python3 /opt/cbtc-bot/bot/teamtalk.py
+Restart=always
+RestartSec=5
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target
