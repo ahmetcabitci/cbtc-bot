@@ -3,6 +3,14 @@
 
 CBTC Bot, TeamTalk kanallarında müzik çalmak için geliştirilen bir bottur. Yerel müzikleri ve YouTube'da aranan şarkıları oynatır. Bir aramada en fazla 10 sonuç alır, ilk sonucu çalar ve sonraki parçalara geçebilir.
 
+## Sürüm Bilgisi
+
+**Güncel sürüm:** v1.0.0 (yayımlanması planlanıyor)
+
+CBTC Bot'un yayımlanan sürümlerine ve güncelleme notlarına GitHub üzerinden ulaşabilirsiniz.
+
+[Son Sürümü Görüntüle](https://github.com/ahmetcabitci/cbtc-bot/releases/latest)
+
 ## Resmî Web Sitesi
 
 CBTC Bot hakkında ayrıntılı bilgi almak, özelliklerini incelemek ve proje tanıtımını okumak için resmî web sitesini ziyaret edebilirsiniz:
@@ -27,7 +35,6 @@ Bot arka planda systemd servisiyle çalışabilir. YouTube sesini almak için ku
 
 **Telegram grubu:** [CBTC Bot](https://t.me/cabitcibot)
 
-
 ## Lisans
 
 CBTC Bot, GNU General Public License v3.0 (GPL-3.0) kapsamında yayımlanan ücretsiz ve açık kaynaklı bir yazılımdır.
@@ -45,4 +52,3 @@ Hataları GitHub üzerinden bildirebilir, yeni özellikler önerebilir ve geliş
 Katkıda bulunmak isteyen geliştiriciler GitHub deposunu ziyaret edebilir:
 
 [CBTC Bot GitHub Deposu](https://github.com/ahmetcabitci/cbtc-bot)
-
