@@ -5,7 +5,7 @@ CBTC Bot, TeamTalk kanallarında müzik çalmak için geliştirilen bir bottur. 
 
 ## Sürüm Bilgisi
 
-**Güncel sürüm:** v1.0.0 (yayımlanması planlanıyor)
+**Güncel sürüm:** v1.0.0
 
 CBTC Bot'un yayımlanan sürümlerine ve güncelleme notlarına GitHub üzerinden ulaşabilirsiniz.
 

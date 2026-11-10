@@ -5,7 +5,7 @@ CBTC Bot is a music bot developed for playing music in TeamTalk channels. It pla
 
 ## Version Information
 
-**Planned release:** v1.0.0
+**Current version:** v1.0.0
 
 You can find published versions of CBTC Bot and their release notes on GitHub.
 
