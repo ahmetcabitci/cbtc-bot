@@ -17,6 +17,12 @@ CBTC Bot hakkında ayrıntılı bilgi almak, özelliklerini incelemek ve proje t
 
 [CBTC Bot – Resmî Web Sitesi](https://www.ahmetcabitci.com.tr/cbtc-bot/)
 
+## Video Tanıtımı
+
+CBTC Bot projesinin Türkçe anlatımlı tanıtım ve kullanım videosunu izleyebilirsiniz.
+
+[YouTube'da İzle](https://www.youtube.com/watch?v=Vj9EtZqZwt4)
+
 ## Kurulum
 
 Ubuntu 24.04 ve 26.04 x86_64 üzerinde sıfırdan kurulum için [KURULUM.txt](KURULUM.txt) dosyasını açın. Dosyada PuTTY'de çalıştırılacak komutlar sırayla verilmiş ve ne işe yaradıkları açıklanmıştır. Git kurmadan, GitHub ZIP bağlantısı üzerinden bot indirilir. Ubuntu 24 SDK dosyaları GitHub paketinde bulunmaz; bunları geliştiriciden ayrı ZIP olarak alıp kurulum kılavuzundaki klasöre yerleştirin. `tools/sdk_indir.py` bu dosyaları doğrular. Ubuntu 26'da aynı araç uygun SDK paketini BearWare'ın resmî sayfasından indirir. Ubuntu 26 kurulumu henüz gerçek sunucuda doğrulanmadı.

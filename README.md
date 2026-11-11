@@ -17,6 +17,12 @@ For detailed information about CBTC Bot, its features, and an introduction to th
 
 [CBTC Bot – Official Website (Turkish)](https://www.ahmetcabitci.com.tr/cbtc-bot/)
 
+## Video Tutorial
+
+Watch the Turkish-language introduction and demonstration of CBTC Bot.
+
+[Watch on YouTube](https://www.youtube.com/watch?v=Vj9EtZqZwt4)
+
 ## Installation
 
 For a fresh installation on Ubuntu 24.04 and 26.04 x86_64, open the [KURULUM.txt](KURULUM.txt) file.
